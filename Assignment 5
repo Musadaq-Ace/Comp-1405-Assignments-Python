@@ -1,0 +1,121 @@
+"""
+Assignment 5
+"""
+
+from random import randrange
+import string, glob
+from collections import namedtuple
+
+
+def big_list(n):
+    """Create a list of n 'random' values in the range [-n/2,n/2]"""
+    return [ randrange(-n//2, n//2) for i in range(n) ]
+	
+	
+def get_words(f):
+    """Extract a list of words from the file named f"""
+    words = open(f).read().lower().split()
+    words = [ string.translate(w, None, string.punctuation) for w in words ]
+    return [ w for w in words if w != '']
+
+varney = get_words("varney.txt")
+words = set(get_words("words.txt"))
+	
+###### Question 1 ######
+def unique(a):
+##that takes a list, a, as an argument and returns a list where each element in a occurs only once. 
+	s = set()
+	b = []
+	for x in a:
+		if not x in s:
+			b.append(x)
+			s.add(x)
+	return b
+	
+###### Question 2 ######
+def negated(a):
+##takes a list, a, as an argument and returns a list containing only the elements x such that -x is also in a
+	s = set()
+	b = []
+	for x in a:
+		if not x in s:
+			b.append(x)
+			s.add(x)
+	c = []
+	for x in a:
+		if -x in s:
+			c.append(x)
+	return c
+
+###### Question 3 ######		
+def only_once(a):
+    #this function takes a list, a, and returns the elements in the list that
+    #only appear once.
+     freq = dict()
+     c=[]
+     for w in a:
+         freq[w] = 0
+     for w in a:
+         freq[w] += 1
+     for i, w in freq.items():
+         if w == 1:
+             c += [i]
+     return c
+			
+	
+###### Question 4 ######
+def spell_check(wordlist):
+###takes a list, wordlist, of words, opens a dictionary named 'words.txt' and returns a list of words in wordlist that don't appear in words.txt. 
+	dictionary = set(get_words('words.txt'))
+	s = set()
+	misspelled = []
+	for x in wordlist:
+		if x not in dictionary:
+			misspelled.append(x)
+			s.add(x)
+	return misspelled
+	
+	
+###### Question 5 ######
+def anagrams(f):
+### opens a text file, f, splits it into words and prints out a list of anagrams in the file. Recall that two words are anagrams if they are the same after we sort their letters alphabetically. 
+    f_words = set(get_words(f))
+    list_of_anagrams = dict()
+    for i in f_words:
+        key = "".join(sorted([c for c in i]))
+        if key in list_of_anagrams:
+            list_of_anagrams[key] += [i]
+        else:
+            list_of_anagrams[key] = [i]
+    new = []
+    for i,x in list_of_anagrams.items():
+        if len(list_of_anagrams[i]) > 1:
+            print "'" + i + "'" + ": " + ", ".join(x)
+	
+
+##### Question 6 ####
+def changes_to_make(word):
+###looks in 'words.txt' for ways to correct the spelling of the word w and returns a list of possible corrections.
+    alphabet = "abcdefghijklmnopqrstuvwxyz"
+    #single letter deletion:
+    single_deletion = [word[:i] + word[i+1:] for i in range(len(word))]
+    single_insertion = []
+    for i in range(len(word)):
+        for j in range(len(alphabet)):
+            single_insertion += [word[:i] + alphabet[j] + word[i:]]
+    single_changes = []
+    for i in range(len(word)):
+        for j in range(len(alphabet)):
+            single_changes += [word[:i] + alphabet[j] + word[i+1:]]
+    return set(single_deletion + single_insertion + single_changes)
+    
+
+def suggest_alternatives(w):
+    #that looks in 'words.txt' for ways to correct the spelling of the word w and returns a list of possible corrections. 
+    global words
+    changes = changes_to_make(w)
+    suggestions = []
+    for i in changes:   
+        if i in words:
+            suggestions += [i]
+    return suggestions

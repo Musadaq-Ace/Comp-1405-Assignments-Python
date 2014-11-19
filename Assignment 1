@@ -1,0 +1,82 @@
+from __future__ import division
+
+
+# Question 1
+
+def f2c(t):
+    """Returns the temperature t expressed in degrees Fahrenheit as a temperature expressed in degrees Celsius"""
+    return (t-32)*5/9
+
+
+# Question 2
+
+def lboz2kg(p,o):
+    """Returns the weight of p pounds and o ounces expressed in kilograms"""
+    return (p+o/16)/2.2
+
+
+# Question 3
+
+def bibformat_mla(author, title, city, publisher, year):
+    """Returns an MLA style for any bibliography"""
+    return "%s. %s. %s: %s, %r" % (author, title, city, publisher, year)
+
+
+# Question 4
+
+def bibformat_apa(author, title, city, publisher, year):
+    """Return an APA style for any bibliography"""
+    return "%s (%r). %s. %s: %s" % (author, year, title, city, publisher)
+
+
+# Question 5
+
+def joker():
+    """Prompts the user for their name and prints a short joke"""
+    print "Enter your name: ",
+    name = raw_input()
+    print ("Why did the %s cross the basketball court?" % name)
+    print ("He heard the ref was blowing fowls.")
+
+
+# Question 6
+
+def bmi(w,h):
+    """Returns the bmi for someone whose weight(in pounds) is w and whose height(in inches) is h"""
+    return (w/(h**2))*703
+
+
+# Question 7
+
+def lbs2lboz(p):
+    """Returns a weight p(pounds) expressed in pounds and ounces"""
+    return (int(p), (p%1)*16)
+
+
+# Question 8
+
+def oz2lboz(oz):
+    """Returns a weight oz(ounces) expressed in pounds and ounces"""
+    return lbs2lboz(oz/16)
+
+
+# Question 9
+
+def bmi_calculator():
+    """A personalized BMI calculator for calculating a user's BMI information"""
+    app = raw_input("Enter you appellation (Mr., Mrs., Dr.,...): ")
+    fn = raw_input("Enter your first name: ")
+    ln = raw_input("Enter your last name: ")
+    h = int(raw_input("Enter your height in inches: "))
+    w = int(raw_input("Enter your weight in pounds: "))
+    print "BMI Record for %s %s %s:" % (app, fn, ln)
+    print "Subject is %d feet %d inches tall" % (int(h/12), h%12), 
+    print "and weighs %d pounds" % w
+    print "Subject's BMI is %f" % bmi(w,h)
+
+
+# Question 10
+
+def hashes(n):
+    """Return a string consisting of n hash (#) characters"""
+    return "#"*int(n)

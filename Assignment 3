@@ -1,0 +1,687 @@
+from __future__ import division
+import time, random, sys
+
+"""Code for easy mode monster"""
+
+def monster_easy(h):
+	print "A giant spider has attacked you!"
+	time.sleep(2)
+	mh = h
+	print "Giant spider: %d HP" % mh
+	time.sleep(2)
+	
+	hlth = 50
+	mgc = 5
+	atk = 10
+
+	if cls == 'SORCERER':
+		mgc = mgc + 10
+		atk = atk - 3
+	if cls == 'WARRIOR':
+		atk = atk + 10
+		mgc = mgc - 3
+		
+	sts = "Your status: \n Class: %s \n Health: %d \n Attack: %d \n Magic: %d" % (cls, hlth, atk, mgc)
+	print sts
+	time.sleep(4)
+	monster = 'Heal', 'Attack', 'Cast', 'Escape'
+	
+	while (mh > 0) and (hlth > 0):
+		activity = random.choice(monster)
+		print ""
+		print "Type A to attack, S to use a spell or H to heal."
+		move = raw_input("")
+		while move not in ('A', 'S', 'H'):
+			print "Please TYPE A to Attack, S to use a spell or H to heal."
+			move = raw_input("")
+			
+		if activity == 'Heal':
+			mh = max(mh, mh + 2)
+			print "The giant spider has healed! It restored some health!"
+			print "Giant spider: %d HP" % mh
+		if activity == 'Attack':
+			print "The giant spider has attacked! You took some damage!"
+			hlth = hlth - 5
+			print "You: %d HP" % hlth
+		if activity == 'Cast':
+			print "The giant spider casts a spell! You took some damage!"
+			hlth = hlth - 3
+			print "You: %d HP" % hlth
+		if activity == 'Escape':
+			print "The giant spider has escaped!"
+			return None	
+			
+		if move == 'A':
+			print "Attacked the giant spider!"
+			# Temporary
+			if cls == 'SORCERER':
+				mh = mh - 5
+			if cls == 'BEAST':
+				mh = mh - 20
+			else:
+				mh = mh - 10
+			print "Giant spider: %d HP" % mh
+		if move == 'S':
+			# Also Temporary
+			if cls == 'SORCERER':
+				mh = mh - 20
+			if cls == 'BEAST':
+				mh = mh - 5
+			else:
+				mh = mh - 10
+			print "Used a spell!"
+			print "Giant spider: %d HP" % mh
+		if move == 'H':
+			hlth = max(50, hlth + 3)
+			print "You restored some health."
+			print "You: %d HP" % hlth
+			
+	if mh != 0:
+		print "The giant spider has been defeated!"
+		time.sleep(1)
+		return None
+	elif hlth != 0:
+		print "You have died. Game OVER!"
+		sys.exit("Quitting game")
+		
+	
+""" Code for Medium mode monster. """
+	
+def monster_medium(h):
+	print "A witch has attacked you!"
+	time.sleep(2)
+	mh = h
+	print "Witch: %d HP" % mh
+	time.sleep(2)
+	
+	hlth = 95
+	mgc = 50
+	atk = 25
+
+	if cls == 'Sorcerer':
+		mgc = mgc + 50
+		atk = atk - 25
+	if cls == 'Beast':
+		atk = atk + 50
+		mgc = mgc - 25
+		
+	sts = "Your status: \n Class: %s \n Health: %d \n Attack: %d \n Magic: %d" % (cls, hlth, atk, mgc)
+	print sts
+	time.sleep(4)
+	witch = 'Heal', 'Attack', 'Cast', 'Esacape'
+	
+	while (mh > 0) and (hlth > 0):
+		activity = random.choice(witch)
+		print "Type A to attack, S to use a spell or H to heal."
+		move = raw_input("")
+		while move not in ('A', 'S', 'H'):
+			print "Please TYPE A to Attack, S to use a spell or H to heal."
+			move = raw_input("")
+			
+			
+		if activity == 'Heal':
+			mh = max(mh, mh + 5)
+			print "The witch has healed! It restored minimal health!"
+			print "Witch: %d HP" % mh
+		if activity == 'Attack':
+			print "The witch has attacked! You took little damage!"
+			hlth = hlth - 25
+			print "You: %d HP" % hlth
+		if activity == 'Cast':
+			print "The witch casts a spell! You took some damage!"
+			hlth = hlth - 50
+			print "You: %d HP" % hlth
+		if activity == 'Escaped':
+			print "The witch has escaped!"
+			return None
+			
+		if move == 'A':
+			print "Attacked the witch!"
+			# Temporary
+			if cls == 'Sorcerer':
+				mh = mh - 25
+			if cls == 'Beast':
+				mh = mh - 50
+			else:
+				mh = mh - 5
+			print "Witch: %d HP" % mh
+		if move == 'S':
+			# Also Temporary
+			if cls == 'Sorcerer':
+				mh = mh - 50
+			if cls == 'Beast':
+				mh = mh - 25
+			else:
+				mh = mh - 5
+			print "Used a spell!"
+			print "Witch: %d HP" % mh
+		if move == 'H':
+			hlth = max(50, hlth + 10)
+			print "You restored some health."
+			print "You: %d HP" % hlth
+			
+	if mh != 0:
+		print "The witch has been defeated!"
+		time.sleep(1)
+		return None
+	elif hlth != 0:
+		print "You have died. Game OVER!"
+		sys.exit("Quitting game")
+		
+""" Code for Hard mode monster. They don't run away. Allowed one attack before death."""
+	
+def monster_hard(h):
+	print "A giant has attacked you!"
+	time.sleep(2)
+	mh = h
+	print "Giant: %d HP" % mh
+	time.sleep(2)
+	
+	hlth = 115
+	mgc = 10
+	atk = 50
+
+	if cls == 'Sorcerer':
+		mgc = mgc + 50
+		atk = atk - 10
+	if cls == 'Beast':
+		atk = atk + 50
+		mgc = mgc - 10
+		
+	sts = "Your status: \n Class: %s \n Health: %d \n Attack: %d \n Magic: %d" % (cls, hlth, atk, mgc)
+	print sts
+	time.sleep(4)
+	giant = 'Heal', 'Attack', 'Cast'
+	
+	while (mh > 0) and (hlth > 0):
+		activity = random.choice(giant)
+		print "Type A to attack, S to use a spell or H to heal."
+		move = raw_input("")
+		while move not in ('A', 'S', 'H'):
+			print "Please TYPE A to Attack, S to use a spell or H to heal."
+			move = raw_input("")
+			
+		if move == 'A':
+			print "Attacked the giant!"
+			# Temporary
+			if cls == 'Sorcerer':
+				mh = mh - 10
+			if cls == 'Beast':
+				mh = mh - 50
+			else:
+				mh = mh - 10
+			print "Giant: %d HP" % mh
+		if move == 'S':
+			# Also Temporary
+			if cls == 'Sorcerer':
+				mh = mh - 50
+			if cls == 'Beast':
+				mh = mh - 10
+			else:
+				mh = mh - 10
+			print "Used a spell!"
+			print "Giant: %d HP" % mh
+		if move == 'H':
+			hlth = max(50, hlth + 10)
+			print "You restored some health."
+			print "You: %d HP" % hlth
+			
+		if activity == 'Heal':
+			mh = max(mh, mh + 10)
+			print "The Giant has healed! It restored some health!"
+			print "Giant: %d HP" % mh
+		if activity == 'Attack':
+			print "The giant has attacked! You took some damage!"
+			hlth = hlth - 50
+			print "You: %d HP" % hlth
+		if activity == 'Cast':
+			print "The giant casts a spell! You took some damage!"
+			hlth = hlth - 10
+			print "You: %d HP" % hlth
+		
+	if mh != 0:
+		print "The giant has been defeated!"
+		time.sleep(1)
+		return None
+	elif hlth != 0:
+		print "You have died. Game OVER!"
+		sys.exit("Quitting game")
+		
+		
+""" Code for boss monster """
+
+def boss_monster(h):
+	print "A Dragon has attacked you!"
+	time.sleep(2)
+	mh = h
+	print "Dragon: %d HP" % mh
+	time.sleep(2)
+	
+	hlth = 125
+	mgc = 10
+	atk = 25
+
+	if cls == 'Sorcerer':
+		mgc = mgc + 75
+		atk = atk - 15
+	if cls == 'Beast':
+		atk = atk + 75
+		mgc = mgc - 15
+		
+	sts = "Your status: \n Class: %s \n Health: %d \n Attack: %d \n Magic: %d" % (cls, hlth, atk, mgc)
+	print sts
+	time.sleep(4)
+	Dragon = 'Heal', 'Attack', 'Cast'
+	
+	while (mh > 0) and (hlth > 0):
+		activity = random.choice(Dragon)
+		print "Type A to attack, S to use a spell or H to heal."
+		move = raw_input("")
+		while move not in ('A', 'S', 'H'):
+			print "Please TYPE A to Attack, S to use a spell or H to heal."
+			move = raw_input("")
+			
+		if move == 'A':
+			print "Attacked the dragon!"
+			# Temporary
+			if cls == 'Sorcerer':
+				mh = mh - 15
+			if cls == 'Beast':
+				mh = mh - 30
+			else:
+				mh = mh - 10
+			print "Dragon: %d HP" % mh
+		if move == 'S':
+			# Also Temporary
+			if cls == 'Sorcerer':
+				mh = mh - 30
+			if cls == 'Beast':
+				mh = mh - 15
+			else:
+				mh = mh - 10
+			print "Used a spell!"
+			print "Dragon: %d HP" % mh
+		if move == 'H':
+			hlth = max(50, hlth + 20)
+			print "You restored some health."
+			print "You: %d HP" % hlth
+			
+		if activity == 'Heal':
+			mh = max(mh, mh + 20)
+			print "The Dragon has healed! It restored some health!"
+			print "Dragon: %d HP" % mh
+		if activity == 'Attack':
+			print "The Dragon has attacked! You took a lot of damage!"
+			hlth = hlth - 75
+			print "You: %d HP" % hlth
+		if activity == 'Cast':
+			print "The dragon used Fire Breath! You took some damage!"
+			hlth = hlth - 15
+			print "You: %d HP" % hlth
+		
+	if mh != 0:
+		print "Congratulations! You defeated the Dragon!"
+		time.sleep(1)
+		print "%s gained Valuable Experience. Use It Wisely." % name
+		return None
+	elif hlth != 0:
+		print "You have died. SORRY! GAME OVER!"
+		sys.exit("Quitting game")
+
+
+""" Code for monster encounters. Useful! """
+
+def monster_encounter(a, b, c):
+	if dif == 'EASY':
+		monster_easy(a)
+	elif dif == 'MEDIUM':
+		monster_medium(b)
+	elif dif == 'HARD':
+		monster_hard(c)
+		
+""" Code(s) for timed input """
+
+def dodge_trap(prompt, timeout, word):
+	start = time.time()
+	s = raw_input("(%ds) %s" % (timeout, prompt) )
+	stop = time.time()
+	
+	if stop-start > timeout:
+		print "You were too slow! The trap knocked you out and you fell unconscious..."
+		time.sleep(30)
+		print "..."
+		time.sleep(3)
+		print "You finally came to. You get up and exit the underground  tunnel."
+	elif s == word:
+		print "You did it!"
+	else:
+		print "Close enough..You dodged the rock."
+		
+def password(prompt, timeout, word):
+	start = time.time()
+	s = raw_input("(%ds) %s" % (timeout, prompt) )
+	stop = time.time()
+	
+	if stop-start > timeout:
+		print "The spirit speaks: \n\t'You were too slow. Now I'm going to make you fall asleep for 30 seconds."
+		time.sleep(1)
+		print "..."
+		time.sleep(30)
+		print "..."
+		time.sleep(3)
+		print "You finally came to."
+		time.sleep(1)
+		print "The spirit speaks again: \n\tI see you woke up. You can go through the door now, I'm bored."
+	elif s in str(word):
+		print "You did it!"
+	else:
+		print "WRONG!"
+		s = raw_input("(%ds) %s" % (timeout, prompt) )
+		
+		if stop-start > timeout:
+			print "The spirit speaks: \n\t'You were too slow. Now I'm going to make you fall asleep for 30 seconds."
+			time.sleep(1)
+			print "..."
+			time.sleep(30)
+			print "..."
+			time.sleep(3)
+			print "You finally came to."
+			time.sleep(1)
+			print "The spirit speaks again: \n\tI see you woke up. You can go through the door now, I'm bored."	
+				
+		elif s in str(word):
+			print "You did it!"
+				
+		else:
+			print "Sorry you got it wrong twice. Game OVER!"
+			sys.exit("Quitting game")
+		
+def password2(prompt, timeout, word):
+	start = time.time()
+	s = raw_input("(%ds) %s" % (timeout, prompt) )
+	stop = time.time()
+	
+	if stop-start > timeout:
+		print "The spirit speaks: \n\t'You were too slow. Now I'm going to make you fall asleep for 30 seconds. (again)"
+		time.sleep(1)
+		print "..."
+		time.sleep(30)
+		print "..."
+		time.sleep(3)
+		print "You finally came to."
+		time.sleep(1)
+		print "The spirit speaks again: \n\tI see you woke up. NOW GET OUT!!!"
+	elif s == word:
+		print "You did it!"
+	else:
+		print "WRONG!"
+		s = raw_input("(%ds) %s" % (timeout, prompt) )
+		
+		if stop-start > timeout:
+			print "The spirit speaks: \n\t'You were too slow. Now I'm going to make you fall asleep for 30 seconds."
+			time.sleep(1)
+			print "..."
+			time.sleep(30)
+			print "..."
+			time.sleep(3)
+			print "You finally came to."
+			time.sleep(1)
+			print "The spirit speaks again: \n\tI see you woke up!!!"	
+			
+		elif s == word:
+			print "You did it!"
+			
+		else:
+			print "Sorry you got it wrong twice. Game OVER!"
+			sys.exit("Quitting game")
+		
+
+""" Main Game """
+		
+print "Welcome to Python Adventure Quest! Whenever you're ready to play, press ENTER."
+raw_input()
+time.sleep(2)	
+print "Choose your difficulty level:"
+time.sleep(1)
+print " Type EASY, MEDIUM, or HARD"
+dif = raw_input("")
+while dif not in ('EASY', 'MEDIUM', 'HARD'):
+		print "Please type either EASY, MEDIUM, or HARD with capital letters."
+		dif = raw_input("")
+print "You have chosen to play in %s mode" % dif
+time.sleep(2)
+print "Next, choose your class."
+time.sleep(1)
+print " Type Explorer, BEAST or SORCERER."
+cls = raw_input("")
+
+
+while cls not in ('EXPLORER', 'BEAST', 'SORCERER'):
+		print "Please type either explorer, beast, and sorcerer in capital letters."
+		cls = raw_input("")
+		
+if cls == 'EXPLORER':
+	print "You have chosen to play as an %s" % cls
+elif cls == 'BEAST':
+	print "You have chosen to play as a %s" % cls
+elif cls == 'SORCERER':
+	print "You have chosen to play as a %s" % cls	
+else:
+	print "Please type either EXPLORER, BEAST, or SORCERER with capital letters."
+	cls = raw_input("")
+time.sleep(1)
+print " Finally pick a name for your Character"
+time.sleep(1)
+name = raw_input("")
+time.sleep(1)
+print "..."
+time.sleep(1)
+print "OK!"
+time.sleep(1)
+print "The adventure of %s, the %s will start! You will be playing this game in %s mode." % (name, cls, dif)
+time.sleep(3)
+print "..."
+time.sleep(1)
+print ""
+print "You find yourself at the entrance of Death City that's in chaos."
+time.sleep(2)
+print "A sign at the front reads: \n'Only the saviour can save Death City  . \nThe one who will save the City will receive a great reward.'"
+time.sleep(1)
+print "You notice the word save written on the back of the sign."
+time.sleep(3)
+print "Enter the city?"
+print " Type YES or NO. "
+ent = raw_input("")
+
+while ent not in ('YES', 'NO'):
+	print "Please type either YES to enter or NO to leave."
+	ent = raw_input("")
+
+if ent == 'NO':
+	while ent == 'NO':
+		print "Now is not the time to be Afraid! There's a reward waiting for you! Say YES!"
+		ent = raw_input("")
+if ent == 'YES':
+	print "Entering the city."
+	print "..."
+else:
+	print "I'll take that as a yes. Entering the city!"
+time.sleep(2)
+
+print "It's dark outside...It's hard to look around."
+time.sleep(1)
+print "Use some conjuration to light the area? Type YES or NO."
+choice1 = raw_input("")
+while choice1 not in ('YES', 'NO'):
+	print "Please type either YES to use conjuration or NO to continue walking."
+	choice1 = raw_input("")
+
+if choice1 == 'NO':
+	print "Chose not to light the area."
+elif choice1 == 'YES':
+	print "You cast a spell for light. A  gold key on the ground catches your eye. You pick it up."
+time.sleep(1)
+print "You continue walking, eventually reaching a door leading to a underground tunnel, but you open it."
+time.sleep(1)
+monster_encounter(50, 5, 10)
+time.sleep(2)
+print "You walk through the through the underground tunnel, you hear a noise."
+time.sleep(2)
+print "The sound is coming from the walls. You've set off a trap!"
+time.sleep(2)
+dodge_trap("You have 5 seconds to type escape to escape the trap!", 5, 'dodge')
+time.sleep(2)
+monster_encounter(50, 5, 10)
+time.sleep(1)
+print "Just as you catch your breath..."
+time.sleep(2)
+monster_encounter(50, 5, 10)
+time.sleep(2)
+print "You've finally reached the first set of doors."
+time.sleep(2)
+print "However an invisible barrier is blocking the way."
+time.sleep(2)
+print "The ghost of the underground speaks: "
+print ""
+time.sleep(1)
+print "	Before you go through the door, you must tell me the word you saw at the front of the tower."
+print ""
+time.sleep(2)
+print "	Oh and you only have 5 seconds to type it in. Ha Ha Ha"
+time.sleep(2)
+password('Type in your answer', 5, 'save')
+time.sleep(2)
+print "You've reached the second set of doors."
+time.sleep(2)
+print "The tunnel appears to be smaller, as you can see the door to the third set of doors across the tunnel."
+time.sleep(3)
+monster_encounter(75, 5, 15)
+print ""
+print "As you make your way across the tunnel, three more monsters charge at you."
+print ""
+time.sleep(2)
+print "Oh Lord..."
+time.sleep(1)
+monster_encounter(95, 50, 25)
+monster_encounter(95, 50, 25)
+monster_encounter(95, 50, 25)
+print ""
+time.sleep(2)
+print "After that tough encounter, you finally exit the end of the tunnel."
+time.sleep(2)
+print "A humongous giant appears out of nowhere and runs at you. It carries a giant sized club in it's hand."
+print ""
+time.sleep(2)
+print "What would you like to do?"
+time.sleep(2)
+print "\tType: \n\t\tTAUNT to taunt the giant\n\t\tSTARE to stare it down\n\t\tFLUTE to use your flute\n\t\tSTORY to tell it a story"
+choice2 = raw_input("")
+while choice2 not in ('TAUNT', 'STARE', 'FLUTE', 'STORY'):
+	print "Please type either TAUNT, STARE, FLUTE, or STORY."
+	choice2 = raw_input("")
+if choice2 == 'TAUNT':
+	time.sleep(1)
+	print "You made fun of the giant'."
+	time.sleep(1)
+	print "It! You were able to pass."
+if choice2 == 'STARE':
+	time.sleep(1)
+	print "You stared down the giant."
+	time.sleep(1)
+	print "The Giant became confused. You were able to pass."
+if choice2 == 'FLUTE':
+	time.sleep(1)
+	print "You used your flute."
+	time.sleep(1)
+	print "It didn't work. The giant is awake. Regardless, the giant finds your singing humorous and allows you to pass."
+if choice2 == 'STORY':
+	time.sleep(1)
+	print "You told the giant a story."
+	time.sleep(1)
+	print "The giant becomes bored and falls asleep. Allowing you to pass."
+
+time.sleep(1)
+print ""
+print "."
+monster_encounter(115, 10, 50)
+time.sleep(1)
+print "As you walk outside, you begin to wonder if anything will happen to you other than just monster attacks."
+time.sleep(4)
+print "..."
+monster_encounter(115, 10, 50)
+time.sleep(3)
+print "There's a mountain just up ahead."
+time.sleep(2)
+print "Suddenly, a deep pit trap activates under your feet - trapping you inside."
+time.sleep(2)
+print ""
+print "The magical spirit of the underground returns again."
+print ""
+print "\t'Hahaha! Payback for getting passed me from before.'"
+print ""
+time.sleep(1)
+print "\n>%s disregards logistics of pitfall trap outside" % name
+print ""
+time.sleep(2)
+print "\t'If you want to escape the trap, you'll have to tell me the answer to this question:'"
+time.sleep(3)
+print "\t'This city is called _______ City?  \n\tI'll give you 10 seconds.'"
+time.sleep(2)
+password2('Type your answer here', 10, 'DEATH')
+time.sleep(2)
+print ""
+print "Escaped the trap."
+time.sleep(1)
+print ""
+monster_encounter(115, 10, 50)
+print ""
+time.sleep(1)
+print "Slowly but surely you make your way to the entrance of the mountain."
+time.sleep(1)
+print "A funny looking special lock is keeping the door locked."
+time.sleep(2)
+if choice1 == 'YES':
+	print "You remember the gold key you found when you entered Death City. It unlocks the lock."
+	print ""
+	time.sleep(2)
+	print "All of a sudden, the door opens and a dragon starts dashing out."
+	print ""
+	time.sleep(2)
+	print "It seems that the dragon was locked up for quite some time and is very hungry."
+	time.sleep(1)
+	print "Get ready for the final fight!!"
+	boss_monster(150)
+else:
+	print "Suddenly the elder dragon flies out from on top of the mountain and is furious."
+	print ""
+	time.sleep(2)
+	print "Get ready for the final fight!!"
+	boss_monster(250)
+print ""
+time.sleep(2)
+print "The door to the secret room opens up."
+print ""
+time.sleep(1)
+print "A gold chest sits in the dragon's nest. You walk to the chest and open it up."
+print ""
+time.sleep(1)
+print "Inside you find a note. The notes says: Thank you for saving Death City but the prize you get is experience for another game of Adventure Quest!!!"
+time.sleep(2)
+print ""
+time.sleep(4)
+print "..."
+time.sleep(2)
+print "The end."
+sys.exit
+
+
+
+
+
+
+
+
+	
+	
+	
+

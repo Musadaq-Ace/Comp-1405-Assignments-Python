@@ -1,0 +1,78 @@
+
+
+class Track(object):
+    """A Track object represents a single track in an album"""
+    def __init__(self, artist, title, album=[], filename=''):
+        self.artist = artist
+        self.title = title
+        self.album = album
+        self.filename = filename
+    
+
+    def __str__(self):
+        s = "Track: %s: %s" % (self.artist, self.title)
+        if (len(self.album) > 0):
+            s += " [%d albums]" % len(self.album)
+        return s
+        
+    def set_album(self, album):
+        self.album = album[:]
+        
+    
+class Album(object):
+    """An album object represents an album"""
+    def __init__(self, artist, title, year='', genre='', tracks=[]):
+        self.artist = artist
+        self.title = title
+        self.genre = genre
+        self.tracks = tracks[:] 
+
+    def add_track(self, track):
+        self.tracks.append(track)
+
+    def __str__(self):
+        s = "Album: %s: %s" % (self.artist, self.title)
+        if (len(self.tracks) > 0):
+            s += " [%d tracks]" % len(self.tracks)
+        return s
+
+def music_library(tracks, albums):
+    while True:
+        c = raw_input("Search (s, sa, st, or S): ")
+        (command,waste,prompt) = c.partition(' ')
+        prompt = prompt.lower()
+        if command == 's':
+            print "Searching for '%s' in album titles..." % prompt, 
+            results = [a for a in albums if prompt in a.title.lower()]
+            print "done"
+        elif command == 'sa':
+            results = {t.artist for t in tracks if prompt in t.artist.lower()}
+        elif command == 'st':
+            results = [t for t in tracks if prompt in t.title.lower()]
+        elif command == 'S':
+            results = [t for t in tracks \
+                        if prompt in t.title.lower() \
+                        or prompt in t.artist.lower()]
+            results.extend([a for a in albums \
+                        if prompt in a.title.lower() \
+                        or prompt in a.artist.lower() \
+                        or prompt in a.genre.lower()])
+        else:
+            print "Search command must be one of s, sa, st, or S"
+            results = []
+        for x in results: print "  %s" % str(x)
+
+
+def load_library(filename):
+	"""Load a music library from a file"""
+	tracks = [];
+	albums = [];
+	lines = open(filename).read().splitlines() 
+	for line in lines:
+		music = line.split("|")
+		album = Album(music[1], music[0])
+		track = Track(music[0], music[1])
+		tracks.append(track)
+	for album in albums:
+		albums.append(album)
+	return (tracks, albums)

@@ -1,0 +1,146 @@
+from __future__ import division
+
+
+# Question 1
+
+def zetal(n):
+    """Return n zetal(n)"""
+    return sum(1.0/n for n in range(1,n+1))
+
+
+# Question 2
+
+def multiply(x,y):
+    """Return the product of x and y"""
+    return x*y
+
+def product(a):
+    """Return the products in a"""
+    return reduce(multiply, a)
+
+# Question 3
+
+def average(a):
+    """Return the average of numbers in a"""
+    return sum(a)/len(a)
+
+
+# Question 4
+
+def to_str(a):
+    """converts each of its elements to a string (using str(a[i])) and appends all these strings together."""
+    s = ""
+    for x in a:
+        s = s + str(x)
+    return s
+
+
+# Question 5
+
+def threshold(a, x):
+    """returns an array containing only the values of a that are greater than or equal to x"""
+    b = []
+    for y in a:
+        if y >= x: 
+            b.append(y)
+    return b
+
+
+# Question 6
+
+def square(a):
+    """Return an array containing each of the values of a squared"""
+    return [ x**2 for x in a ]
+
+
+
+# Question 7
+
+def is_zero(x):
+    """takes a number, x, and returns the string"""
+    if x == 0:
+        return "zero"
+    return "not zero"
+
+
+# Question 8
+
+def bmi_cat(bmi):
+    """takes a number, bmi, and returns the string"""
+    if bmi < 18.5:
+        cat = "underweight"
+    elif bmi < 25:
+        cat = "normal"
+    elif bmi < 30:
+        cat = "overweight"
+    else:
+        cat = "obese"
+    return cat
+
+
+# Question 9
+
+def bmi(w,h):
+    """Compute the BMI given a weight and height"""
+    return (w/(h**2))*703
+
+def bmi_app():
+    """A simple application for computing BMI
+
+    reads a user's height (in inches) and weight (in pounds) and reports their BMI and their BMI category"""
+    w = int(raw_input("Enter your weight in pounds: "))
+    h = int(raw_input("Enter your height in inches: "))
+    b = bmi(w,h)
+    cat = bmi_cat(b)
+    print "Your BMI is %f. You are %s." % (b, cat)
+    
+
+
+
+# Question 10
+
+def weight_format(b):
+    """takes an integer, mg, that represents a number milligrams and returns a readable string representation of this number of milligrams"""
+    if b < 1000:
+        weight = "%.1fmg" % b
+    elif b < 1000000:
+        weight = "%.1fg" % (b/1000)
+    elif b < 1000000000:
+        weight = "%.1fkg" % (b/1000000)
+    elif b < 1000000000000:
+        weight = "%.1ft" % (b/1000000000)
+    else:
+        weight = "%.1ft" % (b/1000000000)
+    return weight
+
+
+
+# Question 11
+
+def time_of_day(h):
+    """Convert an integer hour into an equivalent string"""
+    if h == 12: return "noon"
+    names = [ "midnight", "one", "two", "three", "four", "five", 
+              "six", "seven", "eight", "nine", "ten", "eleven" ]
+    return names[h%12]
+
+def time_format(h,m):
+    """ takes a time of day, expressed in hours and minutes, rounds it to the nearest 5 minutes, and expresses it as a string"""
+    m = int(5*round(m / 5)) 
+    names = {
+        0: "%s o'clock" % time_of_day(h),
+        5: "five after %s" % time_of_day(h),
+       10: "ten after %s" % time_of_day(h),
+       15: "a quarter after %s" % time_of_day(h),
+       20: "twenty after %s" % time_of_day(h), 
+       25: "twenty five after %s" % time_of_day(h), 
+       30: "half past %s" % time_of_day(h), 
+       35: "twenty five to %s" % time_of_day(h+1), 
+       40: "twenty to %s" % time_of_day(h+1), 
+       45: "a quarter to %s" % time_of_day(h+1), 
+       50: "ten to %s" % time_of_day(h+1), 
+       55: "five to %s" % time_of_day(h+1), 
+       60: "%s o'clock" % time_of_day(h+1)
+    }
+    return names[m]
+

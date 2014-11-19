@@ -1,0 +1,371 @@
+from __future__ import division
+import math
+import sys
+import pygame
+
+rad_to_deg = 180/3.14159265
+two_pi = 2*3.14159265
+pi_over_two = 3.141592653/2
+
+class vector():
+    def __init__(self,x=0,y=0):
+        self.x = x
+        self.y = y
+        
+class Object():
+    def __init__(self, name, image_filename = None, image_scale = 1.0, x=0, y=0, velocity_scalar=1.0, accel_rate=1.0,vel_x=0,vel_y=0,rotation = 0):
+        """initializes an Object"""
+       
+        if not image_filename is None:
+            self.image_unscaled = pygame.image.load(image_filename)
+            self.image_scaled = pygame.transform.scale(self.image_unscaled,(int(self.image_unscaled.get_width()*image_scale),int(self.image_unscaled.get_height()*image_scale)))
+        
+        self.location = vector(x,y)
+        self.velocity = vector(vel_x,vel_y)
+        
+        self.image_rotated = self.image_scaled
+        
+        self.rotation = 0
+        
+        self.name = name
+        
+        self.acceleration = accel_rate
+        
+        self.velocity_scalar = velocity_scalar
+        
+        self.render_location = vector()
+        
+    def update(self):
+        """updates the location of Object, applying velocity """
+        
+        self.location.x += self.velocity.x
+        self.location.y += self.velocity.y
+        
+        self.image_rotated = pygame.transform.rotate(self.image_scaled,self.rotation)
+        
+        self.render_location.x = self.location.x - (self.image_rotated.get_width()/2)
+        self.render_location.y = self.location.y - (self.image_rotated.get_width()/2)
+        
+        
+    
+    def ball(self,x,y,velocity_scalar,hit_distance):
+        """have the Object ball/chase down a location"""
+        global rad_to_deg
+        #difference between Object and ball
+        difference = vector(self.location.x - x,self.location.y - y)
+        
+        
+        if difference.y > 0:
+            self.rotation = math.atan(difference.x/difference.y) * rad_to_deg + 180
+        elif difference.y < 0:
+            self.rotation = math.atan(difference.x/difference.y) * rad_to_deg
+    
+        distance = math.sqrt(difference.x**2.0 + difference.y**2.0)
+        
+        self.distance_from_ball = distance
+        
+        scalar = self.acceleration/distance
+        
+        accel_ball = vector(-scalar*difference.x,-scalar*difference.y)
+        
+        self.velocity.x = (self.velocity.x * self.velocity_scalar) + accel_ball.x
+        self.velocity.y = (self.velocity.y * self.velocity_scalar) + accel_ball.y
+        
+        if distance < hit_distance:
+            return True
+        else:
+            return False
+
+        
+        
+        
+class MyGame(object):
+    def __init__(self):
+        """Initialize a new game"""
+        pygame.mixer.init()
+        pygame.mixer.pre_init(44100, -16, 2, 2048)
+        pygame.init()
+        
+        self.width = 800
+        self.height = 600
+        self.screen = pygame.display.set_mode((self.width, self.height))
+        
+        # use a black background
+        self.bg_color = 255,255,0
+        
+        # Setup a timer to refresh the display FPS times per second
+        self.FPS = 60
+        self.REFRESH = pygame.USEREVENT+1
+        pygame.time.set_timer(self.REFRESH, 1000//self.FPS)
+        
+        #set up sound:
+        self.sound_music = pygame.mixer.Sound("race.wav")
+        self.sound_life = pygame.mixer.Sound("bark.WAV")
+        self.sound_gameover = pygame.mixer.Sound("gameover.wav")
+        
+        #font renderer
+        self.myfont = pygame.font.SysFont("courier", 25)
+        
+        self.myfont_info = pygame.font.SysFont("courier", 15)
+        
+        #Game part:
+        self.lives = 3
+        self.game_over = False
+        self.game_over_timer = 0.0
+        self.game_over_time = self.sound_gameover.get_length()
+        self.game_over_sound_played = False
+        
+        self.score = 0
+        self.cat_caught = False
+        self.objects= dict()
+        
+
+        self.cat_life = False
+        self.render_cat = True
+        self.life_cat_timer = 0.0
+        self.life_cat_time = 5.0
+        
+        self.standard_image_scale = 0.25
+        
+        self.min_hit_distance = 60
+        
+  
+        
+        self.objects["cat"] = Object("cat","cat.png",self.standard_image_scale,0,0,0.9**(1.0/4.0),10.0/16.0)
+        
+
+        self.objects["dogs"] = []
+        
+        self.game_event_add_dog()
+        
+        self.states = dict()
+        self.states["main_menu"] = self.state_main_menu
+        self.states["run_game"] = self.state_run_game
+        
+        
+        
+        self.game_counters_increment = 1/self.FPS
+        
+        self.game_events = dict()
+        self.game_time = 0.0
+
+        self.game_events[1.0] = [0.0, self.game_event_add_score]
+        self.game_events[30.0] = [0.0, self.game_event_add_dog]
+        self.game_events[0.05] = [0.0, self.game_event_cat_life_check]
+    
+        
+        self.current_state = "main_menu"
+        self.pause = False
+        self.pause_timer = 3.0
+        
+        
+        self.channel_1 = self.sound_music.play(-1)
+    
+    def game_event_add_dog(self):
+    
+        new_dog_location_x = -100
+        new_dog_location_y = -100
+        self.objects["dogs"].append(Object("dog","dog.png",self.standard_image_scale,new_dog_location_x,new_dog_location_y,0.9**(1.0/4.0),((float(len(self.objects["dogs"]))*3.0) + 8.0)/16.0))
+    
+    def game_event_add_score(self):
+        self.score += 100
+        
+    def game_event_cat_life_check(self):
+        if self.cat_life:
+            self.render_cat = not self.render_cat
+        else:
+            self.render_cat = True
+            
+    
+    def update_mouse_location(self):
+        mouse_pos = pygame.mouse.get_pos()
+        self.mouse_location = vector(mouse_pos[0],mouse_pos[1])
+        self.mouse_buttons_pressed = pygame.mouse.get_pressed()
+    
+    def mouse_is_hit(self,x,y,width,height):
+        if self.mouse_location.x > x and self.mouse_location.y > y and self.mouse_location.x < x+width and self.mouse_location.y < y+height:
+            return True
+        else:
+            return False
+    
+    def reset_game(self):
+        self.lives = 3
+        self.score = 0
+        self.cat_caught = False
+        self.game_over = False
+        self.objects= dict()
+        
+        
+        self.cat_life = False
+        self.render_cat = True
+        
+        self.objects["cat"] = Object("cat","cat.png",self.standard_image_scale,0,0,0.9**(1.0/4.0),10.0/16.0)
+        
+        
+        self.objects["dogs"] = []
+        
+        self.game_event_add_dog()
+        self.game_time = 0.0
+        self.current_state = "run_game"
+        
+        self.game_events[1.0] = [0.0, self.game_event_add_score]
+        self.game_events[30.0] = [0.0, self.game_event_add_dog]
+        self.game_events[0.05] = [0.0, self.game_event_cat_life_check]
+        self.channel_1.unpause()
+    
+    def state_main_menu(self):
+        
+        self.screen.fill([0,0,0])
+        self.update_mouse_location()
+        self.channel_1.pause()
+        new_game = self.myfont.render("New Game", 1, [255,255,255])
+        continue_game = self.myfont.render("Continue Game", 1, [128,128,128])
+        options = self.myfont.render("Options", 1, [128,128,128])
+        exit = self.myfont.render("Exit", 1, [255,255,255])
+        
+        if self.mouse_is_hit((self.width/2-new_game.get_width()/2),200,new_game.get_width(),new_game.get_height()):
+            new_game = self.myfont.render("New Game", 1, [255,255,0])
+            if self.mouse_buttons_pressed[0]:
+                self.reset_game()
+                self.pause = False
+        
+        if self.mouse_is_hit((self.width/2-new_game.get_width()/2),305,new_game.get_width(),new_game.get_height()):
+            exit = self.myfont.render("Exit", 1, [255,0,0])
+            if self.mouse_buttons_pressed[0]:
+                sys.exit()
+        
+        if self.pause:
+            continue_game = self.myfont.render("Continue Game", 1, [255,255,255])
+            if self.mouse_is_hit((self.width/2-continue_game.get_width()/2),235,continue_game.get_width(),continue_game.get_height()):
+                if self.mouse_buttons_pressed[0]:
+                    self.current_state = "run_game"
+        self.screen.blit(new_game, ((self.width/2-new_game.get_width()/2),200))
+        self.screen.blit(continue_game, ((self.width/2-continue_game.get_width()/2),235))
+        self.screen.blit(options, ((self.width/2-options.get_width()/2),270))
+        self.screen.blit(exit, ((self.width/2-exit.get_width()/2),305))
+        
+    def state_run_game(self):
+        
+        
+        self.screen.fill(self.bg_color)
+        dog_hit = False
+        
+        self.update_mouse_location()
+        keys = pygame.key.get_pressed()
+        
+        
+        if not self.game_over:
+            if keys[pygame.K_p]:
+                self.pause = True
+                self.current_state = "main_menu"
+        
+        if self.cat_caught:
+            if not self.pause and not self.game_over:
+                if self.life_cat_timer == 0.0:
+                    self.channel_1.pause()
+                    self.sound_life.play()
+                if self.life_cat_timer > self.sound_life.get_length() and self.life_cat_timer < self.sound_life.get_length()+self.game_counters_increment:
+                    self.sound_life.stop()
+                    self.channel_1.unpause()
+                self.life_cat_timer += self.game_counters_increment
+            if self.life_cat_timer > self.life_cat_time:
+                self.life_cat_timer = 0.0
+                self.cat_life = False
+                self.cat_caught = False
+        
+        if not self.pause and not self.game_over:
+            
+            for index,event in self.game_events.items():
+                self.game_events[index][0] += self.game_counters_increment
+                if self.game_events[index][0] > float(index):
+                    self.game_events[index][0] = 0.0
+                    self.game_events[index][1]()
+        
+   
+        for index, Object in self.objects.items():
+           
+            if type(self.objects[index]) is list:
+                
+                if index == "dogs":
+                    
+                    for i in range(len(Object)):
+                        if not self.pause and not self.game_over:
+                            dog_hit = self.objects[index][i].ball(self.objects["cat"].location.x,self.objects["cat"].location.y,self.objects[index][i].velocity_scalar,self.min_hit_distance)
+                            self.objects[index][i].update()
+                        self.screen.blit(self.objects[index][i].image_rotated, (self.objects[index][i].render_location.x,self.objects[index][i].render_location.y))
+                        if dog_hit == True and not self.cat_life:
+                            self.cat_caught = True
+                            self.cat_life = True
+                            self.lives -= 1
+                            self.score -= 500
+            else:
+                if index == "cat":
+                    if not self.pause and not self.game_over:
+                        self.objects[index].ball(self.mouse_location.x,self.mouse_location.y,self.objects["cat"].velocity_scalar,self.min_hit_distance)
+                        self.objects[index].update()
+                    if self.render_cat:
+                        self.screen.blit(self.objects[index].image_rotated, (self.objects[index].render_location.x,self.objects[index].render_location.y))
+        
+        if self.pause:
+            self.pause_timer -= self.game_counters_increment
+            pause_time_left = self.myfont_info.render("Unpausing in: " + str(self.pause_timer), 1, [0,0,0])
+            self.screen.blit(pause_time_left,(200,300))
+            if self.pause_timer <= 0:
+                self.pause_timer = 3.0
+                self.pause = False
+                self.channel_1.unpause()
+        
+        #set up game info:
+        score_info = self.myfont_info.render("Score: " + str(self.score), 1, [0,0,0])
+        lives_info = self.myfont_info.render("lives left: " + str(self.lives), 1, [0,0,0])
+        self.screen.blit(score_info,(5,5))
+        self.screen.blit(lives_info,(self.width-200,5))
+        
+        if self.lives < 0:
+            self.game_over = True
+        
+        if self.game_over:
+            self.channel_1.pause()
+            game_over_msg = self.myfont_info.render("GAME OVER", 1, [0,0,0])
+            self.screen.blit(game_over_msg,((self.width/2) - (game_over_msg.get_width()/2),300))
+            
+            if not self.game_over_sound_played:
+                self.sound_gameover.play()
+                self.game_over_sound_played = True
+            
+            if self.game_over_timer >= self.game_over_time:
+                self.game_over_sound_played = False
+                self.current_state = "main_menu"
+            else:
+                self.game_over_timer += self.game_counters_increment
+        
+        
+        
+        
+    def run(self):
+        """Loop forever processing events"""
+        running = True
+        
+        while running:
+            event = pygame.event.wait()
+
+            # player is asking to quit
+            if event.type == pygame.QUIT:
+                running = False
+
+            # time to draw a new frame
+            elif event.type == self.REFRESH:
+                self.screen.fill([0,0,0])
+                
+                self.states[self.current_state]()
+                
+                pygame.display.flip()
+
+            else:
+                pass # an event type we don't handle            
+
+
+MyGame().run()
+pygame.quit()
+sys.exit()
+
